@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>hey.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #e8ede9;
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow: hidden;
+      background: #e8ede9;
+    }
+
+    .bg-svg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: #f5f0eb;
+      border-radius: 24px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 2px 24px rgba(60,70,50,0.08);
+    }
+
+    /* ── swap this block with <img class="photo" src="your-photo.jpg"> ── */
+    .photo-placeholder {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      display: block;
+      overflow: hidden;
+    }
+
+    .photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .bottom {
+      padding: 1.4rem 1.6rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .question-text {
+      font-size: 17px;
+      font-weight: 400;
+      color: #2e3028;
+      line-height: 1.55;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px 0;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      flex: 1;
+      transition: transform 0.12s, opacity 0.15s;
+      letter-spacing: 0.01em;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-yes {
+      background: #3b4a35;
+      color: #e8ede9;
+    }
+    .btn-yes:hover { opacity: 0.85; }
+
+    .btn-no {
+      background: #ddd8d0;
+      color: #5a5650;
+      /* becomes position:fixed via JS after load */
+    }
+    .btn-no:hover { opacity: 0.85; }
+
+    /* ── thank you state ── */
+    .thanks {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      z-index: 1;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #f5f0eb;
+      box-shadow: 0 2px 24px rgba(60,70,50,0.08);
+      animation: fadeUp 0.45s ease forwards;
+    }
+    .thanks.show { display: flex; flex-direction: column; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .thanks-photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      display: block;
+    }
+
+    .thanks-bottom {
+      padding: 1.4rem 1.6rem 1.6rem;
+      width: 100%;
+    }
+
+    .thanks-msg {
+      font-size: 17px;
+      font-weight: 400;
+      color: #2e3028;
+      line-height: 1.55;
+    }
+
+    .thanks-sub {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #7a7870;
+    }
+
+    @media (max-width: 420px) {
+      .card, .thanks { border-radius: 18px; }
+      .question-text, .thanks-msg { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- background blobs -->
+  <svg class="bg-svg" viewBox="0 0 400 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <circle cx="340" cy="80"  r="160" fill="#c9d4c5" opacity="0.55"/>
+    <circle cx="30"  cy="300" r="130" fill="#b8cbb3" opacity="0.4"/>
+    <circle cx="380" cy="540" r="200" fill="#c9d4c5" opacity="0.35"/>
+    <circle cx="70"  cy="680" r="110" fill="#b8cbb3" opacity="0.3"/>
+    <ellipse cx="200" cy="400" rx="300" ry="130" fill="#d4dcd0" opacity="0.2"/>
+  </svg>
+
+  <div class="wrapper">
+
+    <!-- ── MAIN CARD ── -->
+    <div class="card" id="main-card">
+
+      <!--
+        TO USE YOUR OWN PHOTO:
+        Delete the <div class="photo-placeholder"> block below
+        and replace with:
+        <img class="photo" src="your-photo.jpg" alt="photo" />
+      -->
+      <div class="photo-placeholder">
+        <svg viewBox="0 0 380 285" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="380" height="285" fill="#b8cbb3"/>
+          <ellipse cx="190" cy="340" rx="220" ry="160" fill="#9fb89a" opacity="0.6"/>
+          <circle cx="70"  cy="60"  r="55" fill="#c9d4c5" opacity="0.7"/>
+          <circle cx="310" cy="40"  r="40" fill="#afc0aa" opacity="0.5"/>
+          <ellipse cx="190" cy="200" rx="140" ry="70" fill="#a8bda3" opacity="0.5"/>
+          <circle cx="190" cy="115" r="38" fill="#f5f0eb" opacity="0.92"/>
+          <circle cx="190" cy="105" r="16" fill="#c9d4c5"/>
+          <path d="M152 142 Q190 128 228 142" stroke="#c9d4c5" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <text x="190" y="178" text-anchor="middle"
+            font-family="DM Sans, sans-serif" font-size="11"
+            fill="#7a8c76" letter-spacing="1.5">ADD YOUR PHOTO HERE</text>
+        </svg>
+      </div>
+
+      <div class="bottom">
+        <p class="question-text">hey — would you want to grab coffee sometime?</p>
+        <div class="btn-row">
+          <button class="btn btn-yes" id="yes-btn">yeah, sure</button>
+          <button class="btn btn-no" id="no-btn">nah</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── THANKS CARD ── -->
+    <div class="thanks" id="thanks-card">
+      <div class="thanks-photo">
+        <svg viewBox="0 0 380 285" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect width="380" height="285" fill="#b8cbb3"/>
+          <ellipse cx="190" cy="340" rx="220" ry="160" fill="#9fb89a" opacity="0.6"/>
+          <circle cx="70"  cy="60"  r="55" fill="#c9d4c5" opacity="0.7"/>
+          <circle cx="310" cy="40"  r="40" fill="#afc0aa" opacity="0.5"/>
+          <ellipse cx="190" cy="200" rx="140" ry="70" fill="#a8bda3" opacity="0.5"/>
+          <circle cx="190" cy="120" r="44" fill="#f5f0eb" opacity="0.95"/>
+          <path d="M175 116 Q190 128 205 116" stroke="#3b4a35" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <circle cx="181" cy="110" r="3" fill="#3b4a35"/>
+          <circle cx="199" cy="110" r="3" fill="#3b4a35"/>
+        </svg>
+      </div>
+      <div class="thanks-bottom">
+        <p class="thanks-msg">sounds good — see you then.</p>
+        <p class="thanks-sub">looking forward to it.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const MARGIN   = 14;
+    const noBtn    = document.getElementById('no-btn');
+    const yesBtn   = document.getElementById('yes-btn');
+    const mainCard = document.getElementById('main-card');
+    const thanksCard = document.getElementById('thanks-card');
+    let placed = false;
+
+    function moveNo() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const w  = noBtn.offsetWidth  || 130;
+      const h  = noBtn.offsetHeight || 44;
+      noBtn.style.left   = (Math.random() * (vw - w - MARGIN * 2) + MARGIN) + 'px';
+      noBtn.style.top    = (Math.random() * (vh - h - MARGIN * 2) + MARGIN) + 'px';
+      noBtn.style.right  = 'auto';
+      noBtn.style.bottom = 'auto';
+    }
+
+    function initNo() {
+      if (placed) return;
+      const r = yesBtn.getBoundingClientRect();
+      noBtn.style.position = 'fixed';
+      noBtn.style.zIndex   = '999';
+      noBtn.style.flex     = 'none';
+      noBtn.style.width    = noBtn.offsetWidth + 'px';
+      noBtn.style.left     = (r.right + 12) + 'px';
+      noBtn.style.top      = r.top + 'px';
+      placed = true;
+    }
+
+    noBtn.addEventListener('mouseover', moveNo);
+    noBtn.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      moveNo();
+    }, { passive: false });
+
+    yesBtn.addEventListener('click', function() {
+      mainCard.style.display = 'none';
+      noBtn.style.display    = 'none';
+      thanksCard.classList.add('show');
+    });
+
+    window.addEventListener('load', initNo);
+    window.addEventListener('resize', function() { if (placed) moveNo(); });
+  </script>
+
+</body>
+</html>
